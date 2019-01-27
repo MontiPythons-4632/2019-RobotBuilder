@@ -98,7 +98,6 @@ Children:
           default: 1
           name: Right Motor
           type: PIDOutput
-          validators: [RobotDrive2, ChildDropdownSelected]
           value: Right
         Maximum Output: !!robotbuilder.data.properties.DoubleProperty {default: 1,
           name: Maximum Output, validators: null, value: 1.0}
@@ -106,7 +105,7 @@ Children:
           default: 0
           name: Left Motor
           type: PIDOutput
-          validators: [RobotDrive2, ChildDropdownSelected]
+          validators: &id017 [RobotDrive2, ChildDropdownSelected]
           value: Left
         Safety Expiration Time: !!robotbuilder.data.properties.DoubleProperty {default: 0.1,
           name: Safety Expiration Time, validators: null, value: 0.1}
@@ -183,7 +182,7 @@ Children:
           default: '0'
           name: Reverse PCM (Solenoid)
           validators: &id011 [Solenoid]
-          value: '1'
+          value: '5'
         Reverse Channel (Solenoid): !!robotbuilder.data.properties.ChoicesProperty
           choices: &id012 ['0', '1', '2', '3', '4', '5', '6', '7']
           default: '0'
@@ -244,26 +243,48 @@ Children:
     Base: Subsystem
     Name: ClimberLift
   - Children:
-    - Children: []
+    - Children:
+      - Children: []
+        Properties:
+          CAN ID: !!robotbuilder.data.properties.ChoicesProperty
+            choices: *id003
+            default: '2'
+            name: CAN ID
+            validators: *id004
+            value: '6'
+        Base: Victor SPX
+        Name: Left
+      - Children: []
+        Properties:
+          CAN ID: !!robotbuilder.data.properties.ChoicesProperty
+            choices: *id003
+            default: '2'
+            name: CAN ID
+            validators: *id004
+            value: '7'
+        Base: Victor SPX
+        Name: Right
       Properties:
-        CAN ID: !!robotbuilder.data.properties.ChoicesProperty
-          choices: *id003
-          default: '2'
-          name: CAN ID
-          validators: *id004
-          value: '6'
-      Base: Victor SPX
-      Name: Left
-    - Children: []
-      Properties:
-        CAN ID: !!robotbuilder.data.properties.ChoicesProperty
-          choices: *id003
-          default: '2'
-          name: CAN ID
-          validators: *id004
-          value: '7'
-      Base: Victor SPX
-      Name: Right
+        Right Motor: !!robotbuilder.data.properties.ChildSelectionProperty
+          default: 1
+          name: Right Motor
+          type: PIDOutput
+          validators: *id016
+          value: Right
+        Maximum Output: !!robotbuilder.data.properties.DoubleProperty {default: 1,
+          name: Maximum Output, validators: null, value: 1.0}
+        Left Motor: !!robotbuilder.data.properties.ChildSelectionProperty
+          default: 0
+          name: Left Motor
+          type: PIDOutput
+          validators: *id017
+          value: Left
+        Safety Expiration Time: !!robotbuilder.data.properties.DoubleProperty {default: 0.1,
+          name: Safety Expiration Time, validators: null, value: 0.1}
+        Safety Enabled: !!robotbuilder.data.properties.BooleanProperty {default: true,
+          name: Safety Enabled, validators: null, value: true}
+      Base: Differential Drive
+      Name: Differential Drive 1
     Properties:
       Send to SmartDashboard: !!robotbuilder.data.properties.BooleanProperty {default: false,
         name: Send to SmartDashboard, validators: null, value: false}
@@ -278,25 +299,31 @@ Children:
         default: []
         name: Constants
         validators: null
-        value: &id019 []
+        value: &id021
+        - !!robotbuilder.data.properties.ValuedParameterDescriptor {name: slow, type: double,
+          value: '0.3'}
+        - !!robotbuilder.data.properties.ValuedParameterDescriptor {name: normal,
+          type: double, value: '0.5'}
+        - !!robotbuilder.data.properties.ValuedParameterDescriptor {name: fast, type: double,
+          value: '0.8'}
     Base: Subsystem
     Name: ClimberDrive
   - Children:
     - Children: []
       Properties:
         Type: !!robotbuilder.data.properties.ChoicesProperty
-          choices: &id016 [Victor, Jaguar, Talon, VictorSP, PWMTalonSRX, Spark, SD540,
+          choices: &id018 [Victor, Jaguar, Talon, VictorSP, PWMTalonSRX, Spark, SD540,
             PWMVictorSPX, DMC60]
           default: Spark
           name: Type
           validators: null
           value: Spark
         Output Channel (PWM): !!robotbuilder.data.properties.ChoicesProperty
-          choices: &id017 ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
+          choices: &id019 ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
             '11', '12', '13', '14', '15', '16', '17', '18', '19']
           default: '0'
           name: Output Channel (PWM)
-          validators: &id018 [PWMOutput]
+          validators: &id020 [PWMOutput]
           value: '0'
         Inverted: !!robotbuilder.data.properties.BooleanProperty {default: false,
           name: Inverted, validators: null, value: false}
@@ -305,16 +332,16 @@ Children:
     - Children: []
       Properties:
         Type: !!robotbuilder.data.properties.ChoicesProperty
-          choices: *id016
+          choices: *id018
           default: Spark
           name: Type
           validators: null
           value: Spark
         Output Channel (PWM): !!robotbuilder.data.properties.ChoicesProperty
-          choices: *id017
+          choices: *id019
           default: '0'
           name: Output Channel (PWM)
-          validators: *id018
+          validators: *id020
           value: '1'
         Inverted: !!robotbuilder.data.properties.BooleanProperty {default: false,
           name: Inverted, validators: null, value: false}
@@ -334,7 +361,7 @@ Children:
         default: []
         name: Constants
         validators: null
-        value: *id019
+        value: *id021
     Base: Subsystem
     Name: Elevator
   - Children:
@@ -380,7 +407,7 @@ Children:
         default: []
         name: Constants
         validators: null
-        value: *id019
+        value: *id021
     Base: Subsystem
     Name: Pinchie
   Properties: {}
@@ -390,20 +417,20 @@ Children:
   - Children: []
     Properties:
       Number: !!robotbuilder.data.properties.ChoicesProperty
-        choices: &id020 ['0', '1', '2', '3', '4', '5']
+        choices: &id022 ['0', '1', '2', '3', '4', '5']
         default: 1
         name: Number
-        validators: &id021 [Joystick]
+        validators: &id023 [Joystick]
         value: '0'
     Base: Joystick
     Name: Joystick 1
   - Children: []
     Properties:
       Number: !!robotbuilder.data.properties.ChoicesProperty
-        choices: *id020
+        choices: *id022
         default: 1
         name: Number
-        validators: *id021
+        validators: *id023
         value: '1'
     Base: Joystick
     Name: Gamepad
