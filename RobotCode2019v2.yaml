@@ -98,6 +98,7 @@ Children:
           default: 1
           name: Right Motor
           type: PIDOutput
+          validators: &id016 [RobotDrive2, ChildDropdownSelected]
           value: Right
         Maximum Output: !!robotbuilder.data.properties.DoubleProperty {default: 1,
           name: Maximum Output, validators: null, value: 1.0}
